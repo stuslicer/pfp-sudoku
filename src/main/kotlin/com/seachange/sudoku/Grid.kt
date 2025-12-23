@@ -9,3 +9,6 @@ fun createGrid(): Grid = Array(GRID_SIZE) { IntArray(GRID_SIZE) { 0 } }
 fun Grid.set(row: Int, column: Int, value: Int) { this[row][column] = value }
 fun Grid.get(row: Int, column: Int) = this[row][column]
 
+fun Grid.isSpace(row: Int, column: Int) = this[row][column] == 0
+
+
