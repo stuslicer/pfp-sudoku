@@ -6,6 +6,8 @@ The first article, which describes what it's all about can be found [here.](http
 
 ## Todo
 + add checks to ensure cell values are between 0 and 9 - 0 represents space
++ alternative ways to preload the grid - AI for example?
++ think about group all the Grid functions together somehow - ¯\_(ツ)_/¯
 
 ## Article 1
 

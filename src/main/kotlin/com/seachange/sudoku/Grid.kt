@@ -11,4 +11,12 @@ fun Grid.get(row: Int, column: Int) = this[row][column]
 
 fun Grid.isSpace(row: Int, column: Int) = this[row][column] == 0
 
+fun loadGrid(values: Grid): Grid {
 
+    val grid = values.copyOf()
+    values.forEachIndexed { index, ints ->
+        grid[index] = ints.copyOf()
+    }
+
+    return grid
+}

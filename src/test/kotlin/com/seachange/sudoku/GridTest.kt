@@ -3,12 +3,30 @@ package com.seachange.sudoku
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
+import assertk.assertions.isNotSameAs
 import assertk.assertions.isTrue
 import org.junit.jupiter.api.Test
 
 class GridTest {
 
     private val grid: Grid = buildGrid()
+
+    private val unsolvedGrid = arrayOf(
+        // top
+        intArrayOf(0, 0, 6,  0, 9, 0,  0, 0, 0),
+        intArrayOf(0, 2, 0,  8, 4, 0,  9, 7, 0),
+        intArrayOf(0, 0, 9,  0, 6, 0,  8, 1, 4),
+
+        // middle
+        intArrayOf(0, 0, 0,  2, 0, 4,  0, 0, 0),
+        intArrayOf(6, 0, 0,  3, 1, 0,  0, 2, 8),
+        intArrayOf(0, 0, 8,  9, 0, 0,  5, 0, 3),
+
+        // bottom
+        intArrayOf(0, 7, 1,  0, 0, 8,  3, 5, 0),
+        intArrayOf(0, 8, 0,  0, 3, 0,  0, 0, 7),
+        intArrayOf(0, 0, 3,  0, 0, 7,  1, 0, 0),
+    )
 
     @Test
     fun `should be able to create a 9 by 9 grid`() {
@@ -28,6 +46,24 @@ class GridTest {
         grid.set(0, 3, 42)
         assertThat(grid.isSpace(0, 2)).isTrue()
         assertThat(grid.isSpace(0, 3)).isFalse()
+    }
+
+    @Test
+    fun `should be able to pre-load a grid from an array`() {
+        val valuesToLoad = unsolvedGrid
+        val result: Grid = loadGrid(valuesToLoad)
+        assertThat(result.contentDeepEquals(valuesToLoad)).isTrue()
+        assertThat(result).isNotSameAs(valuesToLoad)
+
+    }
+
+    @Test
+    fun `the loaded grid should be a deep copy of the values to load`() {
+        val valuesToLoad = unsolvedGrid
+        val result: Grid = loadGrid(valuesToLoad)
+
+        valuesToLoad[0][0] = 9
+        assertThat(result[0][0]).isEqualTo(0)
     }
 
     private fun buildGrid(): Grid = createGrid()
