@@ -1,10 +1,8 @@
 package com.seachange.sudoku
 
+import assertk.assertFailure
 import assertk.assertThat
-import assertk.assertions.isEqualTo
-import assertk.assertions.isFalse
-import assertk.assertions.isNotSameAs
-import assertk.assertions.isTrue
+import assertk.assertions.*
 import org.junit.jupiter.api.Test
 
 class GridTest {
@@ -64,6 +62,79 @@ class GridTest {
 
         valuesToLoad[0][0] = 9
         assertThat(result[0][0]).isEqualTo(0)
+    }
+
+    @Test
+    fun `loadGrid must throw an exception if the input array doesn't have 9 rows`() {
+        val invalidGrid = arrayOf(
+            intArrayOf(0, 0, 6,  0, 9, 0,  0, 0, 0),
+            intArrayOf(0, 2, 0,  8, 4, 0,  9, 7, 0),
+            intArrayOf(0, 0, 9,  0, 6, 0,  8, 1, 4),
+        )
+
+        assertFailure {
+            loadGrid(invalidGrid)
+        }.isInstanceOf(IllegalStateException::class.java)
+            .hasMessage("Input array must have 9 rows")
+
+    }
+
+    @Test
+    fun `loadGrid must throw an exception if any of the input array's rows don't have 9 columns`() {
+        val invalidGrid = arrayOf(
+            // top
+            intArrayOf(0, 0, 6,  0, 9, 0,  0, 0, 0),
+            intArrayOf(0, 2, 0,  8, 4, 0,  9, 7, 0, 1), // extra
+            intArrayOf(0, 0, 9,  0, 6, 0,  8, 1, 4),
+
+            // middle
+            intArrayOf(0, 0, 0,  2, 0, 4,  0, 0, 0),
+            intArrayOf(6, 0, 0,  3, 1, 0,  0, 2), // missing
+            intArrayOf(0, 0, 8,  9, 0, 0,  5, 0, 3),
+
+            // bottom
+            intArrayOf(0, 7, 1,  0, 0, 8,  3, 5), // missing
+            intArrayOf(0, 8, 0,  0, 3, 0,  0, 0, 7),
+            intArrayOf(0, 0, 3,  0, 0, 7,  1, 0, 0),
+        )
+
+        assertFailure {
+            loadGrid(invalidGrid)
+        }.isInstanceOf(IllegalStateException::class.java)
+            .hasMessage("Input array rows must have 9 columns, check out row 1")
+
+    }
+
+    @Test
+    fun `loadGrid must throw an exception if any of the cell values are not between 0 and 9`() {
+        val invalidGrid = arrayOf(
+            // top
+            intArrayOf(0, 0, 10,  0, 9, 0,  0, 0, 0), // 10 is out of range, at (0,2)
+            intArrayOf(0, 2, 0,  8, 4, 0,  9, 7, 0),
+            intArrayOf(0, 0, 9,  0, 6, 0,  8, 1, 4),
+
+            // middle
+            intArrayOf(0, 0, 0,  2, 0, 4,  0, 0, 0),
+            intArrayOf(6, 0, 0,  3, 1, 0,  -1, 2, 8), // -1 is out of range, at (4,6)
+            intArrayOf(0, 0, 8,  9, 0, 0,  5, 0, 3),
+
+            // bottom
+            intArrayOf(0, 7, 1,  0, 0, 8,  3, 5, 0),
+            intArrayOf(0, 8, 0,  0, 3, 0,  0, 0, 7),
+            intArrayOf(0, 0, 3,  0, 0, 7,  1, 0, 0),
+        )
+
+        assertFailure {
+            loadGrid(invalidGrid)
+        }.isInstanceOf(IllegalStateException::class.java)
+            .hasMessage("Input value at (0,2) is out of range, should be between 0 and 9")
+
+        assertFailure {
+            invalidGrid[0][2] = 0
+            loadGrid(invalidGrid)
+        }.isInstanceOf(IllegalStateException::class.java)
+            .hasMessage("Input value at (4,6) is out of range, should be between 0 and 9")
+
     }
 
     private fun buildGrid(): Grid = createGrid()
