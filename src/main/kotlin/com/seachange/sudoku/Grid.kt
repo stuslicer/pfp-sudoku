@@ -12,14 +12,16 @@ fun Grid.get(row: Int, column: Int) = this[row][column]
 
 fun Grid.isSpace(row: Int, column: Int) = this[row][column] == 0
 
+fun Int.isInRange() = this in CELL_RANGE
+
 fun loadGrid(values: Grid): Grid {
     check(values.size == GRID_SIZE) { "Input array must have $GRID_SIZE rows" }
     values.forEachIndexed { row, rowArray ->
         check(rowArray.size == GRID_SIZE) { "Input array rows must have $GRID_SIZE columns, check out row $row" }
     }
-    values.forEachIndexed { row, rowArray ->
-        rowArray.forEachIndexed { column, cellValue ->
-            check(cellValue >= 0 && cellValue <= GRID_SIZE) { "Input value at ($row,$column) is out of range, should be between 0 and $GRID_SIZE" }
+    for( row in values.indices ) {
+        for( column in values[row].indices ) {
+            check(values[row][column].isInRange()) { "Input value at ($row,$column) is out of range, should be between 0 and $GRID_SIZE" }
         }
     }
 
