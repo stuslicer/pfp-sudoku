@@ -9,6 +9,10 @@ typealias Grid = Array<IntArray>
 fun createGrid(): Grid = Array(GRID_SIZE) { IntArray(GRID_SIZE) { 0 } }
 
 fun Grid.set(row: Int, column: Int, value: Int) { this[row][column] = value }
+fun Grid.setAndGet(row: Int, column: Int, value: Int): Int {
+    this[row][column] = value
+    return value
+}
 fun Grid.get(row: Int, column: Int) = this[row][column]
 
 fun Grid.isSpace(row: Int, column: Int) = this[row][column] == 0
@@ -45,34 +49,29 @@ fun Grid.generateSimpleGridOutput(): String {
 fun Grid.generateFullGridOutput(): String {
     val grid = this
     return buildString {
-        append(generateFullHorizontalSeparator())
+        generateFullHorizontalSeparator()
         for (rowIndex in grid.indices) {
-            append(grid[rowIndex].generateFullGridRow())
-            if (rowIndex.isFullGridSeparator())
-                append(generateFullHorizontalSeparator())
-
+            generateFullGridRow(grid[rowIndex])
+            if (rowIndex.isFullGridSeparator()) {
+                generateFullHorizontalSeparator()
+            }
         }
-        append(generateFullHorizontalSeparator())
+        generateFullHorizontalSeparator()
     }.trim()
 }
 
-private fun IntArray.generateFullGridRow(): String {
-    val grid = this
-    return buildString {
-        append("| ")
-        for (column in grid.indices) {
-            append(grid[column].cellValueToString() + " ")
-            if (column.isFullGridSeparator()) {
-                append("| ")
-            }
+private fun StringBuilder.generateFullGridRow(row: IntArray) {
+    append("| ")
+    for (column in row.indices) {
+        append(row[column].cellValueToString() + " ")
+        if (column.isFullGridSeparator()) {
+            append("| ")
         }
-        append("|\n")
     }
+    append("|\n")
 }
 
-private fun Int.isFullGridSeparator() = this % INNER_GRID_SIZE == 2 && this < GRID_SIZE - 1
-
-private fun generateFullHorizontalSeparator() = buildString {
+private fun StringBuilder.generateFullHorizontalSeparator() {
     append("+-")
     for(i in 0 until GRID_SIZE) {
         append("--")
@@ -80,3 +79,5 @@ private fun generateFullHorizontalSeparator() = buildString {
     }
     append("+\n")
 }
+
+private fun Int.isFullGridSeparator() = this % INNER_GRID_SIZE == 2 && this < GRID_SIZE - 1
