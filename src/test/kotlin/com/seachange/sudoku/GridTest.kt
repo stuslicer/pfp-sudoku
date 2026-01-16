@@ -137,6 +137,51 @@ class GridTest {
 
     }
 
+    @Test
+    fun `should generate 'simple' output for a grid`() {
+        val unsolved = """
+                . . 6 . 9 . . . .
+                . 2 . 8 4 . 9 7 .
+                . . 9 . 6 . 8 1 4
+                . . . 2 . 4 . . .
+                6 . . 3 1 . . 2 8
+                . . 8 9 . . 5 . 3
+                . 7 1 . . 8 3 5 .
+                . 8 . . 3 . . . 7
+                . . 3 . . 7 1 . .
+               """.trimIndent()
+
+        val grid = loadGrid(unsolvedGrid)
+        val output = grid.generateSimpleGridOutput()
+
+        assertThat(output).isEqualTo(unsolved)
+    }
+
+    @Test
+    fun `should generate 'full grid' output for a grid`() {
+        val unsolved = """
+                +-------+-------+-------+
+                | . . 6 | . 9 . | . . . |
+                | . 2 . | 8 4 . | 9 7 . |
+                | . . 9 | . 6 . | 8 1 4 |
+                +-------+-------+-------+
+                | . . . | 2 . 4 | . . . |
+                | 6 . . | 3 1 . | . 2 8 |
+                | . . 8 | 9 . . | 5 . 3 |
+                +-------+-------+-------+
+                | . 7 1 | . . 8 | 3 5 . |
+                | . 8 . | . 3 . | . . 7 |
+                | . . 3 | . . 7 | 1 . . |
+                +-------+-------+-------+
+               """.trimIndent()
+
+        val grid = loadGrid(unsolvedGrid)
+        val output = grid.generateFullGridOutput()
+        assertThat(output).isEqualTo(unsolved)
+
+    }
+
+
     private fun buildGrid(): Grid = createGrid()
 
 }

@@ -1,6 +1,7 @@
 package com.seachange.sudoku
 
 const val GRID_SIZE = 9
+const val INNER_GRID_SIZE = 3
 val CELL_RANGE = 0..9
 
 typealias Grid = Array<IntArray>
@@ -31,4 +32,51 @@ fun loadGrid(values: Grid): Grid {
     }
 
     return grid
+}
+
+fun Int.cellValueToString() = if( this == 0 ) "." else "$this"
+
+fun Grid.generateSimpleGridOutput(): String {
+    return this.joinToString(separator = "\n") {
+        it.joinToString(separator = " ") { it.cellValueToString() }
+    }
+}
+
+fun Grid.generateFullGridOutput(): String {
+    val grid = this
+    return buildString {
+        append(generateFullHorizontalSeparator())
+        for (rowIndex in grid.indices) {
+            append(grid[rowIndex].generateFullGridRow())
+            if (rowIndex.isFullGridSeparator())
+                append(generateFullHorizontalSeparator())
+
+        }
+        append(generateFullHorizontalSeparator())
+    }.trim()
+}
+
+private fun IntArray.generateFullGridRow(): String {
+    val grid = this
+    return buildString {
+        append("| ")
+        for (column in grid.indices) {
+            append(grid[column].cellValueToString() + " ")
+            if (column.isFullGridSeparator()) {
+                append("| ")
+            }
+        }
+        append("|\n")
+    }
+}
+
+private fun Int.isFullGridSeparator() = this % INNER_GRID_SIZE == 2 && this < GRID_SIZE - 1
+
+private fun generateFullHorizontalSeparator() = buildString {
+    append("+-")
+    for(i in 0 until GRID_SIZE) {
+        append("--")
+        if(i.isFullGridSeparator()) append("+-")
+    }
+    append("+\n")
 }
