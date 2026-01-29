@@ -26,11 +26,6 @@ class GridTest {
         intArrayOf(0, 0, 3,  0, 0, 7,  1, 0, 0),
     )
 
-    @Test
-    fun `should be able to create a 9 by 9 grid`() {
-        assertThat(grid.size).isEqualTo(9)
-        assertThat(grid[0].size).isEqualTo(9)
-    }
 
     @Test
     fun `should be able to set and get a value from a grid`() {
@@ -49,19 +44,17 @@ class GridTest {
     @Test
     fun `should be able to pre-load a grid from an array`() {
         val valuesToLoad = unsolvedGrid
-        val result: Grid = loadGrid(valuesToLoad)
-        assertThat(result.contentDeepEquals(valuesToLoad)).isTrue()
+        val result: Grid = Grid.createAndLoadGrid(valuesToLoad)
         assertThat(result).isNotSameAs(valuesToLoad)
-
     }
 
     @Test
     fun `the loaded grid should be a deep copy of the values to load`() {
         val valuesToLoad = unsolvedGrid
-        val result: Grid = loadGrid(valuesToLoad)
+        val result: Grid = Grid.createAndLoadGrid(valuesToLoad)
 
         valuesToLoad[0][0] = 9
-        assertThat(result[0][0]).isEqualTo(0)
+        assertThat(result.get(0, 0)).isEqualTo(0)
     }
 
     @Test
@@ -73,7 +66,7 @@ class GridTest {
         )
 
         assertFailure {
-            loadGrid(invalidGrid)
+            Grid.createAndLoadGrid(invalidGrid)
         }.isInstanceOf(IllegalStateException::class.java)
             .hasMessage("Input array must have 9 rows")
 
@@ -99,7 +92,7 @@ class GridTest {
         )
 
         assertFailure {
-            loadGrid(invalidGrid)
+            Grid.createAndLoadGrid(invalidGrid)
         }.isInstanceOf(IllegalStateException::class.java)
             .hasMessage("Input array rows must have 9 columns, check out row 1")
 
@@ -125,13 +118,13 @@ class GridTest {
         )
 
         assertFailure {
-            loadGrid(invalidGrid)
+            Grid.createAndLoadGrid(invalidGrid)
         }.isInstanceOf(IllegalStateException::class.java)
             .hasMessage("Input value at (0,2) is out of range, should be between 0 and 9")
 
         assertFailure {
             invalidGrid[0][2] = 0
-            loadGrid(invalidGrid)
+            Grid.createAndLoadGrid(invalidGrid)
         }.isInstanceOf(IllegalStateException::class.java)
             .hasMessage("Input value at (4,6) is out of range, should be between 0 and 9")
 
@@ -151,8 +144,8 @@ class GridTest {
                 . . 3 . . 7 1 . .
                """.trimIndent()
 
-        val grid = loadGrid(unsolvedGrid)
-        val output = grid.generateSimpleGridOutput()
+        val grid = Grid.createAndLoadGrid(unsolvedGrid)
+        val output = grid.toString()
 
         assertThat(output).isEqualTo(unsolved)
     }
@@ -175,7 +168,7 @@ class GridTest {
                 +-------+-------+-------+
                """.trimIndent()
 
-        val grid = loadGrid(unsolvedGrid)
+        val grid = Grid.createAndLoadGrid(unsolvedGrid)
         val output = grid.generateFullGridOutput()
         assertThat(output).isEqualTo(unsolved)
 
