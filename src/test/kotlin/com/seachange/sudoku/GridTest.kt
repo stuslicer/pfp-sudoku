@@ -169,11 +169,33 @@ class GridTest {
                """.trimIndent()
 
         val grid = Grid.createAndLoadGrid(unsolvedGrid)
-        val output = grid.generateFullGridOutput()
+        val output = grid.generateOutput()
         assertThat(output).isEqualTo(unsolved)
 
     }
 
+    @Test
+    fun `should generate 'full grid' output for a grid using Unicode characters`() {
+        val unsolved = """
+            ╔═══════╦═══════╦═══════╗
+            ║ . . 6 ║ . 9 . ║ . . . ║
+            ║ . 2 . ║ 8 4 . ║ 9 7 . ║
+            ║ . . 9 ║ . 6 . ║ 8 1 4 ║
+            ╠═══════╬═══════╬═══════╣
+            ║ . . . ║ 2 . 4 ║ . . . ║
+            ║ 6 . . ║ 3 1 . ║ . 2 8 ║
+            ║ . . 8 ║ 9 . . ║ 5 . 3 ║
+            ╠═══════╬═══════╬═══════╣
+            ║ . 7 1 ║ . . 8 ║ 3 5 . ║
+            ║ . 8 . ║ . 3 . ║ . . 7 ║
+            ║ . . 3 ║ . . 7 ║ 1 . . ║
+            ╚═══════╩═══════╩═══════╝
+            """.trimIndent()
+
+        val output = grid.generateOutput()
+        assertThat(output).isEqualTo(unsolved)
+
+    }
 
     private fun buildGrid(): Grid = createGrid()
 
