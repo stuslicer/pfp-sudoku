@@ -3,6 +3,7 @@ package com.seachange.sudoku
 import assertk.assertFailure
 import assertk.assertThat
 import assertk.assertions.*
+import com.seachange.com.seachange.sudoku.UnicodeFullGridOutputGenerator
 import org.junit.jupiter.api.Test
 
 class GridTest {
@@ -192,6 +193,7 @@ class GridTest {
             ╚═══════╩═══════╩═══════╝
             """.trimIndent()
 
+        val grid = Grid.createAndLoadGrid(unsolvedGrid, UnicodeFullGridOutputGenerator())
         val output = grid.generateOutput()
         assertThat(output).isEqualTo(unsolved)
 
