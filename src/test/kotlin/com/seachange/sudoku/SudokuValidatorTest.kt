@@ -1,53 +1,50 @@
 package com.seachange.sudoku
 
 import assertk.assertThat
-import assertk.assertions.isTrue
-import org.junit.jupiter.api.Test
+import assertk.assertions.isEqualTo
+import com.seachange.sudoku.testsupport.solvedGrid
+import com.seachange.sudoku.testsupport.unsolvedGrid
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.provider.ArgumentsSource
+import java.util.stream.Stream
 
 class SudokuValidatorTest {
 
-    private val solvedGrid = arrayOf(
-        // top
-        intArrayOf(8, 4, 6,  7, 9, 1,  2, 3, 5),
-        intArrayOf(1, 2, 5,  8, 4, 3,  9, 7, 6),
-        intArrayOf(7, 3, 9,  5, 6, 2,  8, 1, 4),
+    private class CellValidatorArguments(): ArgumentsProvider {
+        override fun provideArguments(p0: ExtensionContext?): Stream<out Arguments> {
+            return Stream.of(
+                Arguments.of(solvedGrid(), 4, true, "solved grid, cell should be valid"),
+                Arguments.of(solvedGrid(), 6, false, "solved grid, cell should be invalid"),
+                Arguments.of(unsolvedGrid(), 4, true, "unsolved grid, cell should be valid"),
+                Arguments.of(unsolvedGrid(), 6, false, "unsolved grid, cell should be invalid"),
+            )
+        }
+    }
 
-        // middle
-        intArrayOf(3, 5, 7,  2, 8, 4,  6, 9, 1),
-        intArrayOf(6, 9, 4,  3, 1, 5,  7, 2, 8),
-        intArrayOf(2, 1, 8,  9, 7, 6,  5, 4, 3),
-
-        // bottom
-        intArrayOf(4, 7, 1,  6, 2, 8,  3, 5, 9),
-        intArrayOf(5, 8, 2,  1, 3, 9,  4, 6, 7),
-        intArrayOf(9, 6, 3,  4, 5, 7,  1, 8, 2),
-    )
-
-    private val unsolvedGrid = arrayOf(
-        // top
-        intArrayOf(0, 0, 6,  0, 9, 0,  0, 0, 0),
-        intArrayOf(0, 2, 0,  8, 4, 0,  9, 7, 0),
-        intArrayOf(0, 0, 9,  0, 6, 0,  8, 1, 4),
-
-        // middle
-        intArrayOf(0, 0, 0,  2, 0, 4,  0, 0, 0),
-        intArrayOf(6, 0, 0,  3, 1, 0,  0, 2, 8),
-        intArrayOf(0, 0, 8,  9, 0, 0,  5, 0, 3),
-
-        // bottom
-        intArrayOf(0, 7, 1,  0, 0, 8,  3, 5, 0),
-        intArrayOf(0, 8, 0,  0, 3, 0,  0, 0, 7),
-        intArrayOf(0, 0, 3,  0, 0, 7,  1, 0, 0),
-    )
-
-    @Test
-    fun `should be able to detect if a cell value is valid for its row`() {
-        val grid = Grid.createAndLoadGrid(solvedGrid)
+    @ParameterizedTest(name = "{3}")
+    @ArgumentsSource(CellValidatorArguments::class)
+    fun `should be able to detect if a cell value is valid for its row`(gridToLoad: GridArray, cellValue: Int, expectedResult: Boolean, description: String) {
+        val grid = Grid.createAndLoadGrid(gridToLoad)
 
         val validator = SudokuValidator(grid)
 
-        grid.set(0, 1, 4)
-        assertThat(validator.isRowValid(0)).isTrue()
+        grid[0, 1] = cellValue
+        assertThat(validator.isRowValid(0)).isEqualTo(expectedResult)
     }
+
+    @ParameterizedTest(name = "{3}")
+    @ArgumentsSource(CellValidatorArguments::class)
+    fun `should be able to detect if a cell value is valid for its column`(gridToLoad: GridArray, cellValue: Int, expectedResult: Boolean, description: String) {
+        val grid = Grid.createAndLoadGrid(gridToLoad)
+
+        val validator = SudokuValidator(grid)
+
+        grid[0, 1] = cellValue
+        assertThat(validator.isColumnValid(1)).isEqualTo(expectedResult)
+    }
+
 
 }

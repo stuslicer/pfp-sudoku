@@ -4,29 +4,12 @@ import assertk.assertFailure
 import assertk.assertThat
 import assertk.assertions.*
 import com.seachange.com.seachange.sudoku.UnicodeFullGridOutputGenerator
+import com.seachange.sudoku.testsupport.unsolvedGrid
 import org.junit.jupiter.api.Test
 
 class GridTest {
 
     private val grid: Grid = buildGrid()
-
-    private val unsolvedGrid = arrayOf(
-        // top
-        intArrayOf(0, 0, 6,  0, 9, 0,  0, 0, 0),
-        intArrayOf(0, 2, 0,  8, 4, 0,  9, 7, 0),
-        intArrayOf(0, 0, 9,  0, 6, 0,  8, 1, 4),
-
-        // middle
-        intArrayOf(0, 0, 0,  2, 0, 4,  0, 0, 0),
-        intArrayOf(6, 0, 0,  3, 1, 0,  0, 2, 8),
-        intArrayOf(0, 0, 8,  9, 0, 0,  5, 0, 3),
-
-        // bottom
-        intArrayOf(0, 7, 1,  0, 0, 8,  3, 5, 0),
-        intArrayOf(0, 8, 0,  0, 3, 0,  0, 0, 7),
-        intArrayOf(0, 0, 3,  0, 0, 7,  1, 0, 0),
-    )
-
 
     @Test
     fun `should be able to set and get a value from a grid`() {
@@ -44,14 +27,14 @@ class GridTest {
 
     @Test
     fun `should be able to pre-load a grid from an array`() {
-        val valuesToLoad = unsolvedGrid
+        val valuesToLoad = unsolvedGrid()
         val result: Grid = Grid.createAndLoadGrid(valuesToLoad)
         assertThat(result).isNotSameAs(valuesToLoad)
     }
 
     @Test
     fun `the loaded grid should be a deep copy of the values to load`() {
-        val valuesToLoad = unsolvedGrid
+        val valuesToLoad = unsolvedGrid()
         val result: Grid = Grid.createAndLoadGrid(valuesToLoad)
 
         valuesToLoad[0][0] = 9
@@ -142,10 +125,10 @@ class GridTest {
                 . . 8 9 . . 5 . 3
                 . 7 1 . . 8 3 5 .
                 . 8 . . 3 . . . 7
-                . . 3 . . 7 1 . .
+                . 6 3 . . 7 1 . .
                """.trimIndent()
 
-        val grid = Grid.createAndLoadGrid(unsolvedGrid)
+        val grid = Grid.createAndLoadGrid(unsolvedGrid())
         val output = grid.toString()
 
         assertThat(output).isEqualTo(unsolved)
@@ -165,11 +148,11 @@ class GridTest {
                 +-------+-------+-------+
                 | . 7 1 | . . 8 | 3 5 . |
                 | . 8 . | . 3 . | . . 7 |
-                | . . 3 | . . 7 | 1 . . |
+                | . 6 3 | . . 7 | 1 . . |
                 +-------+-------+-------+
                """.trimIndent()
 
-        val grid = Grid.createAndLoadGrid(unsolvedGrid)
+        val grid = Grid.createAndLoadGrid(unsolvedGrid())
         val output = grid.generateOutput()
         assertThat(output).isEqualTo(unsolved)
 
@@ -189,11 +172,11 @@ class GridTest {
             ╠═══════╬═══════╬═══════╣
             ║ . 7 1 ║ . . 8 ║ 3 5 . ║
             ║ . 8 . ║ . 3 . ║ . . 7 ║
-            ║ . . 3 ║ . . 7 ║ 1 . . ║
+            ║ . 6 3 ║ . . 7 ║ 1 . . ║
             ╚═══════╩═══════╩═══════╝
             """.trimIndent()
 
-        val grid = Grid.createAndLoadGrid(unsolvedGrid, UnicodeFullGridOutputGenerator())
+        val grid = Grid.createAndLoadGrid(unsolvedGrid(), UnicodeFullGridOutputGenerator())
         val output = grid.generateOutput()
         assertThat(output).isEqualTo(unsolved)
 
