@@ -46,5 +46,26 @@ class SudokuValidatorTest {
         assertThat(validator.isColumnValid(1)).isEqualTo(expectedResult)
     }
 
+    @ParameterizedTest(name = "{3}")
+    @ArgumentsSource(CellValidatorArguments::class)
+    fun `should be able to detect if a cell value is valid for its inner grid`(gridToLoad: GridArray, cellValue: Int, expectedResult: Boolean, description: String) {
+        val grid = Grid.createAndLoadGrid(gridToLoad)
+
+        val validator = SudokuValidator(grid)
+
+        grid[0, 1] = cellValue
+        assertThat(validator.isInnerGridValid(0, 1)).isEqualTo(expectedResult)
+    }
+
+    @ParameterizedTest(name = "{3}")
+    @ArgumentsSource(CellValidatorArguments::class)
+    fun `should be able to detect if a cell value is valid`(gridToLoad: GridArray, cellValue: Int, expectedResult: Boolean, description: String) {
+        val grid = Grid.createAndLoadGrid(gridToLoad)
+
+        val validator = SudokuValidator(grid)
+
+        grid[0, 1] = cellValue
+        assertThat(validator.isCellValid(0, 1)).isEqualTo(expectedResult)
+    }
 
 }
