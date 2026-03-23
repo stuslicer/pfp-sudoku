@@ -5,6 +5,8 @@ import com.seachange.com.seachange.sudoku.OutputGenerator
 
 const val GRID_SIZE = 9
 const val INNER_GRID_SIZE = 3
+
+val GRID_SIZE_RANGE = 0..<GRID_SIZE
 val CELL_RANGE = 0..9
 
 

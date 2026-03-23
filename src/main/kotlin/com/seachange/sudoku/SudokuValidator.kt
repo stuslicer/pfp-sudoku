@@ -1,14 +1,57 @@
 package com.seachange.sudoku
 
+val allCellLocations = Iterable {
+    iterator {
+        GRID_SIZE_RANGE.forEach { rowIndex ->
+            GRID_SIZE_RANGE.forEach { columnIndex ->
+                yield(Pair(rowIndex, columnIndex) )
+            }
+        }
+    }
+}
+
 class SudokuValidator(
     private val grid: Grid
 ) {
+
+    val allCellValues = Iterable {
+        iterator {
+            GRID_SIZE_RANGE.forEach { rowIndex ->
+                GRID_SIZE_RANGE.forEach { columnIndex ->
+                    yield(grid[rowIndex,columnIndex] )
+                }
+            }
+        }
+    }
+
+    val cellsForValidGrid = Iterable {
+        iterator {
+            GRID_SIZE_RANGE.forEach { index ->
+                yield(index to index )
+            }
+            // 2, 3
+            yield(1 to 4)
+            yield(1 to 7)
+
+            // 4, 6
+            yield(4 to 1)
+            yield(4 to 7)
+
+            // 7, 8
+            yield(7 to 1)
+            yield(7 to 4)
+        }
+    }
 
     fun isCellValid(row: Int, column: Int): Boolean = when {
         ! isRowValid(row) -> false
         ! isColumnValid(column) -> false
         ! isInnerGridValid(row, column) -> false
         else -> true
+    }
+
+    fun isGridValid(): Boolean = cellsForValidGrid.all { (row,column) ->
+        isCellValid(row, column)
     }
 
     internal fun isRowValid(row: Int): Boolean =
@@ -41,5 +84,7 @@ class SudokuValidator(
     }
 
     private fun List<Int>.haveNoDuplicates() = this.size == this.distinct().size
+
+    fun isComplete(): Boolean = allCellValues.none { it == 0 }
 
 }

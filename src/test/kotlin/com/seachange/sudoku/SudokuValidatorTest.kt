@@ -2,8 +2,11 @@ package com.seachange.sudoku
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isFalse
+import assertk.assertions.isTrue
 import com.seachange.sudoku.testsupport.solvedGrid
 import com.seachange.sudoku.testsupport.unsolvedGrid
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -66,6 +69,27 @@ class SudokuValidatorTest {
 
         grid[0, 1] = cellValue
         assertThat(validator.isCellValid(0, 1)).isEqualTo(expectedResult)
+    }
+
+    @Test
+    fun `should be able to detect if a solved grid is complete`() {
+        val validator = SudokuValidator(Grid.createAndLoadGrid(solvedGrid()))
+
+        assertThat(validator.isComplete()).isTrue()
+    }
+
+    @Test
+    fun `should be able to detect if a unsolved grid is incomplete`() {
+        val validator = SudokuValidator(Grid.createAndLoadGrid(unsolvedGrid()))
+
+        assertThat(validator.isComplete()).isFalse()
+    }
+
+    @Test
+    fun `should be able to detect if a solved grid is valid`() {
+        val validator = SudokuValidator(Grid.createAndLoadGrid(solvedGrid()))
+
+        assertThat(validator.isGridValid()).isTrue()
     }
 
 }
