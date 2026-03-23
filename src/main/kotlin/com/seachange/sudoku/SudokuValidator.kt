@@ -1,5 +1,9 @@
 package com.seachange.sudoku
 
+import io.github.oshai.kotlinlogging.KotlinLogging
+
+private val logger = KotlinLogging.logger {}
+
 val allCellLocations = Iterable {
     iterator {
         GRID_SIZE_RANGE.forEach { rowIndex ->
@@ -48,11 +52,15 @@ class SudokuValidator(
         ! isColumnValid(column) -> false
         ! isInnerGridValid(row, column) -> false
         else -> true
+    }.also {
+        logger.debug { "isCellValid($row, $column) = $it" }
     }
 
     fun isGridValid(): Boolean = cellsForValidGrid.all { (row,column) ->
         isCellValid(row, column)
     }
+
+    fun isSolved(): Boolean = isGridValid() && isComplete()
 
     internal fun isRowValid(row: Int): Boolean =
         row.nonZeroValuesForRow()
