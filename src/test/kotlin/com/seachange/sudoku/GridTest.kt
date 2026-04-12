@@ -4,6 +4,7 @@ import assertk.assertFailure
 import assertk.assertThat
 import assertk.assertions.*
 import com.seachange.com.seachange.sudoku.UnicodeFullGridOutputGenerator
+import com.seachange.sudoku.testsupport.solvedGrid
 import com.seachange.sudoku.testsupport.unsolvedGrid
 import org.junit.jupiter.api.Test
 
@@ -128,7 +129,7 @@ class GridTest {
                 . 6 3 . . 7 1 . .
                """.trimIndent()
 
-        val grid = Grid.createAndLoadGrid(unsolvedGrid())
+        val grid = buildUnsolvedGrid()
         val output = grid.toString()
 
         assertThat(output).isEqualTo(unsolved)
@@ -152,7 +153,7 @@ class GridTest {
                 +-------+-------+-------+
                """.trimIndent()
 
-        val grid = Grid.createAndLoadGrid(unsolvedGrid())
+        val grid = buildUnsolvedGrid()
         val output = grid.generateOutput()
         assertThat(output).isEqualTo(unsolved)
 
@@ -182,6 +183,91 @@ class GridTest {
 
     }
 
+    // individual tests for equality and hashcode
+
+    @Test
+    fun `two identical grids should be equal`() {
+        val anotherGrid = buildGrid()
+        assertThat(grid).isEqualTo(anotherGrid)
+    }
+
+    @Test
+    fun `two different grids shouldn't be equal`() {
+        val anotherGrid = Grid.createAndLoadGrid(unsolvedGrid())
+        assertThat(grid).isNotEqualTo(anotherGrid)
+    }
+
+    @Test
+    fun `two identical grids should have equal hash codes`() {
+        val anotherGrid = buildGrid()
+        assertThat(grid.hashCode()).isEqualTo(anotherGrid.hashCode())
+    }
+
+    @Test
+    fun `two different grids shouldn't have equal hash codes`() {
+        val anotherGrid = Grid.createAndLoadGrid(unsolvedGrid())
+        assertThat(grid.hashCode()).isNotEqualTo(anotherGrid.hashCode())
+    }
+
+    // full tests
+    @Test
+    fun `equals should be reflexive - a grid should equal itself`() {
+        val grid = buildSolvedGrid()
+        assertThat(grid).isEqualTo(grid)
+    }
+
+    @Test
+    fun `equals should be symmetric - if a equals b then b should equal a`() {
+        val a = buildSolvedGrid()
+        val b = buildSolvedGrid()
+        assertThat(a).isEqualTo(b)
+        assertThat(b).isEqualTo(a)
+    }
+
+    @Test
+    fun `equals should be transitive - if a equals b and b equals c then a should equal c`() {
+        val a = buildSolvedGrid()
+        val b = buildSolvedGrid()
+        val c = buildSolvedGrid()
+        assertThat(a).isEqualTo(b)
+        assertThat(b).isEqualTo(c)
+        assertThat(a).isEqualTo(c)
+    }
+
+    @Test
+    fun `equals should be consistent - repeated calls should return the same result`() {
+        val a = buildSolvedGrid()
+        val b = buildSolvedGrid()
+        repeat(10) {
+            assertThat(a).isEqualTo(b)
+        }
+    }
+
+    @Test
+    fun `equals should be null safe - a grid should never equal null`() {
+        val grid = buildUnsolvedGrid()
+        assertThat(grid).isNotEqualTo(null)
+    }
+
+    @Test
+    fun `equal grids should have equal hash codes`() {
+        val a = buildSolvedGrid()
+        val b = buildSolvedGrid()
+        assertThat(a).isEqualTo(b)
+        assertThat(a.hashCode()).isEqualTo(b.hashCode())
+    }
+
+    @Test
+    fun `unequal grids should not be equal`() {
+        val a = buildSolvedGrid()
+        val b = buildUnsolvedGrid()
+        assertThat(a).isNotEqualTo(b)
+    }
+
+
     private fun buildGrid(): Grid = createGrid()
+
+    private fun buildSolvedGrid(): Grid = Grid.createAndLoadGrid(solvedGrid())
+    private fun buildUnsolvedGrid(): Grid = Grid.createAndLoadGrid(unsolvedGrid())
 
 }

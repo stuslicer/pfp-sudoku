@@ -29,6 +29,8 @@ class Grid(
 
     fun isSpace(row: Int, column: Int) = grid[row][column] == 0
 
+    override fun equals(other: Any?): Boolean = other is Grid && this.toString() == other.toString()
+    override fun hashCode(): Int = toString().hashCode()
     override fun toString(): String  {
         return grid.joinToString(separator = "\n") {
             it.joinToString(separator = " ") { it.cellValueToString() }
